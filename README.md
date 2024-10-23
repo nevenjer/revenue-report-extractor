@@ -2,19 +2,15 @@ import os
 from openpyxl import load_workbook, Workbook
 
 def create_output_file(output_file):
-    # Create a new file and change the name of the worksheet
     wb = Workbook()
     ws = wb.active
     ws.title = "data_cs_bpm"
 
-    # Set the header in row 1
     headers = ['no.', 'id_pos', 'ca', 'name', 'service', 
                'recipt', 'debt', 'rounding_num', 'total', 
                'cash', 'cheque', 'pay_in_slip', 'qr_payment', 
                'date_time', 'status', 'num_bill', 'num_clients']
     ws.append(headers)
-    
-    # Save the file
     wb.save(output_file)
     
 def process_file(input_file, output_file):
@@ -30,13 +26,9 @@ def process_file(input_file, output_file):
 
     ws_output = wb_output['data_cs_bpm']
     
-    # Start writing information from row 1
     start_row = ws_output.max_row + 1
 
-    for row in range(13, ws_input.max_row + 1):  # Starting from the 13th row to the last row
-        
-
-        # Retrieve data from each column
+    for row in range(13, ws_input.max_row + 1):
         data = { 
             'no': ws_input[f'C{row}'].value,                          
             'id_pos': ws_input[f'D{row}'].value,
@@ -55,22 +47,30 @@ def process_file(input_file, output_file):
             'status': ws_input[f'X{row}'].value
         }
     
-        # Write data to output file
-        ws_output.append(list(data.values()))  # Add data to the next row
+        ws_output.append(list(data.values()))
 
-    # Save the output file
+    # Remove rows with 'รวม' in column F
+    for row in range(ws_output.max_row, 1, -1):  # Start from the bottom
+        if ws_output[f'F{row}'].value and str(ws_output[f'F{row}'].value).startswith('รวม'):
+            ws_output.delete_rows(row)
+
+    # Fill 'num_bill' with 1 starting from row 2
+    for row in range(2, ws_output.max_row + 1):
+        ws_output[f'P{row}'] = 1  # Assuming 'num_bill' is the 16th column
+
+    # Fill 'num_clients' with 1 for rows with data in column A
+    for row in range(2, ws_output.max_row + 1):
+        if ws_output[f'A{row}'].value:
+            ws_output[f'Q{row}'] = 1  # Assuming 'num_clients' is the 17th column
+
     wb_output.save(output_file)
 
-# Specify the directory to work in.
-output_file = r'D:\Your Path File\'
-
-# Create a new output file
+output_file = r'D:\Your Path File.xlsx'
 create_output_file(output_file)
 
-# Loop through files in your folder
 for i in range(671008, 671017):  # Rename the specified files to the desired number.
-    input_file = f'D:\Your Path File\'
+    input_file = f'D:\Your Path File.xlsx'
     if os.path.exists(input_file):
         process_file(input_file, output_file)
 
-print('The data extraction operation in your report was successful.')
+print('----------Data extraction from your report completed successfully----------')
