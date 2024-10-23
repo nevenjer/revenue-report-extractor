@@ -65,11 +65,11 @@ def process_file(input_file, output_file):
 
     wb_output.save(output_file)
 
-output_file = r'D:\Your Path File.xlsx'
+output_file = r'D:\Your Output Path File.xlsx'
 create_output_file(output_file)
 
 for i in range(671008, 671017):  # Rename the specified files to the desired number.
-    input_file = f'D:\Your Path File.xlsx'
+    input_file = f'D:\Your Input Path File.xlsx'
     if os.path.exists(input_file):
         process_file(input_file, output_file)
 
