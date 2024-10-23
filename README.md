@@ -78,6 +78,6 @@ create_output_file(output_file)
 
 # Loop through files in FREQ_10 folder
 for i in range(671008, 671011):  # Rename the specified files to the desired number.
-    input_file = f'D:\\SQL\\BPM\\FREQ_10\\{i}.xlsx'
+    input_file = f'D:\Your File Path\'
     if os.path.exists(input_file):
         process_file(input_file, output_file)
